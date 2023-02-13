@@ -13,12 +13,11 @@ from .record import Record
 from .error import DatabaseConnectionError
 
 
-
 logger = logging.getLogger(__name__)
 handler = logging.StreamHandler(sys.stdout)
 handler.setFormatter(logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s"))
 logger.addHandler(handler)
-logger.setLevel(logging.ERROR)
+logger.setLevel(logging.INFO)
 
 
 class Scraper:
@@ -41,12 +40,14 @@ class Scraper:
             raise DatabaseConnectionError
         pass
     
-    def scrape(self, query: str, window: int, limit: int):
-        logger.info(f"Scraping reddit for posts containing [{query}] in the last [{window}] days. limit [{limit}]")
+    def scrape(self, query: str, window: int):
+        logger.info(f"Scraping reddit for posts containing [{query}] in the last [{window}] days.")
         comments = self.api.search_comments(
             q=query, 
-            limit=limit, 
-            search_window=window
+            search_window=window,
+            mem_safe=True,
+            cache_dir='/cache',
+            safe_exit=True
         )
         records = []
         for comment in comments:

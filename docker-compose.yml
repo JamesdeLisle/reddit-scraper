@@ -11,7 +11,9 @@ services:
       - RESET_DB=true
     depends_on:
       db:
-        condition: service_healthy
+       condition: service_healthy
+    volumes:
+      - ./cache:/cache
   db:
     image: postgres:latest
     restart: always
@@ -30,4 +32,6 @@ services:
       retries: 5
 volumes:
   db:
+    driver: local
+  scraper:
     driver: local
